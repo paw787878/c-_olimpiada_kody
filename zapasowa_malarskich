@@ -1,0 +1,123 @@
+#include <iostream>
+#include <vector>
+#include <assert.h>
+#include <sstream>
+using namespace std;
+
+class Duza_liczba{
+    public:
+        int n;
+        vector<int> tab;
+        int pods;
+        int ile_cyfr_na_pojedynczy;
+        Duza_liczba();
+        Duza_liczba operator+ (Duza_liczba & b);
+        Duza_liczba operator- (Duza_liczba & b);
+        bool operator> (Duza_liczba & b);
+        void wczytaj(string napis);
+        void wypisz();
+};
+
+void Duza_liczba::wypisz(){
+    bool jeszcze_nie=true;
+    for(int i=n-1;i>=0;i--)
+        if(!(tab[i]==0&&jeszcze_nie)){
+            cout<<tab[i];
+            jeszcze_nie=false;
+        }
+}
+
+void Duza_liczba::wczytaj(string napis){
+    int napis_size=napis.size();
+    int ile_cyfr_nadpisac=(napis_size/ile_cyfr_na_pojedynczy)+1;
+    for(int i=0;i<ile_cyfr_nadpisac;i++){
+        int ile_odciac;
+        if(i==ile_cyfr_nadpisac-1)
+            ile_odciac=napis_size-i*ile_cyfr_na_pojedynczy;
+        else
+            ile_odciac=ile_cyfr_na_pojedynczy;
+        
+        string odcinany=napis.substr(max(0,napis_size-(i+1)*ile_cyfr_na_pojedynczy),ile_odciac);
+        stringstream ss;
+        ss<<odcinany;
+        ss>>tab[i];
+    }
+    for(int i=ile_cyfr_na_pojedynczy;i<n;i++)
+        tab[i]==0;
+}
+
+bool Duza_liczba::operator> (Duza_liczba & b){
+    for(int i=n-1;i>=0;i--){
+        if(tab[i]>b.tab[i])
+            return true;
+        else if (tab[i]<b.tab[i])
+            return false;
+    }
+    return false;
+}
+
+Duza_liczba Duza_liczba::operator- (Duza_liczba & b){
+    assert ((*this)>b);
+    Duza_liczba wyrzut;
+    Duza_liczba a;
+    for(int i=0;i<n;i++)
+        a.tab[i]=tab[i];
+    
+    for(int i=0;i<n;i++){
+        if(a.tab[i]<b.tab[i]){
+            //teraz trzeba nazbieraz z tych wyzszych
+            //cout<<"teraz zaczynam rozdystrybuudowac "<<endl;
+            int j=i+1;
+            for(;j<n;j++)
+                if(!(a.tab[j]==0))
+                    break;
+            //teraz j to jest pierwsza nie zerowym
+            //cout<<"j "<<j<<endl;
+            for(int k=j;k>=i+1;k--){
+                a.tab[k]--;
+                a.tab[k-1]+=pods;
+            }
+        }
+        wyrzut.tab[i]=a.tab[i]-b.tab[i];
+    }
+    return wyrzut;
+}
+
+Duza_liczba Duza_liczba::operator+ (Duza_liczba & b){
+    //cout<<"wywoluje doawanie"<<endl;
+    Duza_liczba wyrzut;
+    int pom;
+    int z_poprzedniego=0;
+    for(int i=0;i<n;i++){
+        //cout<<"i teraz wynosi "<<i<<endl;
+        pom=tab[i]+b.tab[i]+z_poprzedniego;
+        //cout<<"pom"<<pom<<endl;
+        wyrzut.tab[i]=(pom%pods);
+        //cout<<"dopisalem "<<(pom%pods)<<endl;
+        z_poprzedniego=(pom/pods);
+        //cout<<"z popzedniego wynosi teraz "<<z_poprzedniego<<endl;
+    }
+    return wyrzut;
+}
+
+Duza_liczba::Duza_liczba(){
+    //cout<<"wywoluje domyslny konstrutkor";
+    n=11;
+    ile_cyfr_na_pojedynczy=8;
+    pods=1;
+    for(int i=0;i<ile_cyfr_na_pojedynczy;i++)
+        pods*=10;
+    for(int i=0;i<n;i++)
+        tab.push_back(0);
+}
+
+int main() 
+{
+    Duza_liczba a;
+    Duza_liczba b;
+    a.wczytaj("901");
+    b.wczytaj("20");
+    
+    cout<<"wynik to"<<endl;
+    (a-b).wypisz();
+}

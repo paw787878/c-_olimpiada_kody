@@ -1,0 +1,7 @@
+5 3 1
+caa
+bbb
+aad
+aaa
+caa
+5 1 1 2

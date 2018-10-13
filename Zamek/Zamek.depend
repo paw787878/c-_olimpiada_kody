@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1529856006 source:/home/pawel/Desktop/c++_projects/Zamek/main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+	<utility>
+
